@@ -40,6 +40,25 @@ export enum TextRecognitionScript {
 }
 
 /**
+ * Recognition level for iOS Vision framework.
+ * 
+ * @platform iOS
+ */
+export enum RecognitionLevel {
+  /**
+   * Accurate recognition - slower but more accurate.
+   * Best for most use cases where accuracy is important.
+   */
+  ACCURATE = 'accurate',
+  
+  /**
+   * Fast recognition - faster but less accurate.
+   * Best for real-time processing or when speed is critical.
+   */
+  FAST = 'fast',
+}
+
+/**
  * Options for text recognition.
  */
 export interface RecognitionOptions {
@@ -63,6 +82,7 @@ export interface RecognitionOptions {
    * 
    * This option is ignored on Android. Use `script` instead.
    * 
+   * @platform iOS
    * @example ['en-US', 'zh-Hans'] // Prefer English, then Chinese
    * @example ['ja-JP'] // Japanese only
    * @example ['ko-KR'] // Korean
@@ -70,5 +90,66 @@ export interface RecognitionOptions {
    * @see Use `getSupportedLanguages()` to get the list of available languages.
    */
   languages?: string[];
-}
 
+  /**
+   * Whether to automatically detect the language of the text (iOS only).
+   * 
+   * When `true`, the Vision framework will automatically detect the language
+   * without requiring you to specify `languages`. This is useful when you
+   * don't know what language the text might be in.
+   * 
+   * Defaults to `false`.
+   * 
+   * @platform iOS
+   * @default false
+   */
+  automaticallyDetectsLanguage?: boolean;
+
+  /**
+   * Whether to use language correction (iOS only).
+   * 
+   * When `true`, the Vision framework applies language correction to improve
+   * recognition accuracy. This can help with spelling and grammar.
+   * 
+   * Defaults to `true`.
+   * 
+   * @platform iOS
+   * @default true
+   */
+  usesLanguageCorrection?: boolean;
+
+  /**
+   * Custom words to help with recognition (iOS only).
+   * 
+   * An array of custom words (like proper nouns, technical terms, or brand names)
+   * that should be recognized even if they're not in the standard dictionary.
+   * 
+   * @platform iOS
+   * @example ['iPhone', 'MacBook', 'AirPods']
+   */
+  customWords?: string[];
+
+  /**
+   * Minimum text height as a fraction of the image height (iOS only).
+   * 
+   * Text smaller than this fraction of the image height will be ignored.
+   * Value should be between 0 and 1. Lower values detect smaller text.
+   * 
+   * Defaults to approximately 1/32 of the image height.
+   * 
+   * @platform iOS
+   * @example 0.05 // Ignore text smaller than 5% of image height
+   */
+  minimumTextHeight?: number;
+
+  /**
+   * Recognition level for accuracy vs speed tradeoff (iOS only).
+   * 
+   * - `ACCURATE`: Slower but more accurate (default)
+   * - `FAST`: Faster but less accurate
+   * 
+   * @platform iOS
+   * @default RecognitionLevel.ACCURATE
+   */
+  recognitionLevel?: RecognitionLevel;
+}

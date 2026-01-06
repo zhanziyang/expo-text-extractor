@@ -1,8 +1,8 @@
 import ExpoTextExtractorModule from './ExpoTextExtractorModule';
-import { TextRecognitionScript, RecognitionOptions } from './types';
+import { TextRecognitionScript, RecognitionLevel, RecognitionOptions } from './types';
 
 // Re-export types
-export { TextRecognitionScript, RecognitionOptions };
+export { TextRecognitionScript, RecognitionLevel, RecognitionOptions };
 
 /**
  * A boolean value that indicates whether the text extraction module is supported on the current device.

@@ -8,6 +8,21 @@ struct RecognitionOptions: Record {
     
     @Field
     var languages: [String]?
+    
+    @Field
+    var automaticallyDetectsLanguage: Bool?
+    
+    @Field
+    var usesLanguageCorrection: Bool?
+    
+    @Field
+    var customWords: [String]?
+    
+    @Field
+    var minimumTextHeight: Float?
+    
+    @Field
+    var recognitionLevel: String?
 }
 
 public class ExpoTextExtractorModule: Module {
@@ -22,7 +37,7 @@ public class ExpoTextExtractorModule: Module {
         ///
         /// - Parameters:
         ///   - url: Path or URL to the image file
-        ///   - options: Optional recognition options containing preferred languages
+        ///   - options: Optional recognition options containing preferred languages and other settings
         AsyncFunction("extractTextFromImage") { (url: URL, options: RecognitionOptions?, promise: Promise) in
             do {
                 let imageData = try Data(contentsOf: url)
@@ -49,8 +64,12 @@ public class ExpoTextExtractorModule: Module {
                     promise.resolve(recognizedTexts)
                 }
                 
-                // Configure recognition level for best accuracy
-                request.recognitionLevel = .accurate
+                // Configure recognition level (default: accurate)
+                if let level = options?.recognitionLevel?.lowercased() {
+                    request.recognitionLevel = level == "fast" ? .fast : .accurate
+                } else {
+                    request.recognitionLevel = .accurate
+                }
                 
                 // Set recognition languages if provided
                 if let languages = options?.languages, !languages.isEmpty {
@@ -60,8 +79,29 @@ public class ExpoTextExtractorModule: Module {
                     request.recognitionLanguages = self.languagesForScript(script)
                 }
                 
-                // Enable automatic language correction
-                request.usesLanguageCorrection = true
+                // Configure automatic language detection (iOS 16+)
+                if #available(iOS 16.0, *) {
+                    if let autoDetect = options?.automaticallyDetectsLanguage {
+                        request.automaticallyDetectsLanguage = autoDetect
+                    }
+                }
+                
+                // Configure language correction (default: true)
+                if let usesCorrection = options?.usesLanguageCorrection {
+                    request.usesLanguageCorrection = usesCorrection
+                } else {
+                    request.usesLanguageCorrection = true
+                }
+                
+                // Set custom words for recognition
+                if let customWords = options?.customWords, !customWords.isEmpty {
+                    request.customWords = customWords
+                }
+                
+                // Set minimum text height
+                if let minHeight = options?.minimumTextHeight {
+                    request.minimumTextHeight = minHeight
+                }
 
                 try requestHandler.perform([request])
             } catch {

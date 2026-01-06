@@ -1,6 +1,6 @@
 {
   "name": "@zhanziyang/expo-text-extractor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Multi-language OCR text recognition for React Native/Expo using ML Kit and Vision. Supports Latin, Chinese, Japanese, Korean, and Devanagari scripts.",
   "keywords": [
     "react-native",

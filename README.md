@@ -30,10 +30,18 @@ The library supports multiple scripts and languages:
 
 ## Installation
 
-To get started, install the library using Expo CLI:
+To get started, install the library:
 
 ```sh
-npx expo install expo-text-extractor
+npx expo install @zhanziyang/expo-text-extractor
+```
+
+Or with npm/yarn:
+
+```sh
+npm install @zhanziyang/expo-text-extractor
+# or
+yarn add @zhanziyang/expo-text-extractor
 ```
 
 > Ensure your project is running Expo SDK 52+.
@@ -47,7 +55,7 @@ Check the [example app](https://github.com/pchalupa/expo-text-extractor/blob/mai
 A boolean value indicating whether the current device supports text extraction.
 
 ```ts
-import { isSupported } from 'expo-text-extractor';
+import { isSupported } from '@zhanziyang/expo-text-extractor';
 
 if (isSupported) {
   console.log('Text extraction is supported on this device.');
@@ -59,7 +67,7 @@ if (isSupported) {
 Extracts text from an image and returns the recognized text as an array.
 
 ```ts
-import { extractTextFromImage, TextRecognitionScript } from 'expo-text-extractor';
+import { extractTextFromImage, TextRecognitionScript } from '@zhanziyang/expo-text-extractor';
 
 // Basic usage (Latin script by default)
 const texts = await extractTextFromImage('file:///path/to/image.jpg');
@@ -84,12 +92,17 @@ const japaneseTexts = await extractTextFromImage('file:///path/to/image.jpg', {
 
 #### Recognition Options
 
-| Property    | Type                      | Platform | Description                                                                                                        |
-| ----------- | ------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
-| `script`    | `TextRecognitionScript`   | Android  | The script type to use for recognition. Defaults to `LATIN`.                                                       |
-| `languages` | `string[]`                | iOS      | Array of BCP-47 language codes (e.g., `'en-US'`, `'zh-Hans'`, `'ja-JP'`). The order indicates preference.          |
+| Property                       | Type                      | Platform | Default     | Description                                                                                   |
+| ------------------------------ | ------------------------- | -------- | ----------- | --------------------------------------------------------------------------------------------- |
+| `script`                       | `TextRecognitionScript`   | Android  | `LATIN`     | The script type to use for recognition.                                                       |
+| `languages`                    | `string[]`                | iOS      | -           | Array of BCP-47 language codes (e.g., `'en-US'`, `'zh-Hans'`, `'ja-JP'`).                     |
+| `automaticallyDetectsLanguage` | `boolean`                 | iOS 16+  | `false`     | Automatically detect language without specifying `languages`.                                 |
+| `usesLanguageCorrection`       | `boolean`                 | iOS      | `true`      | Apply language correction to improve recognition accuracy.                                    |
+| `customWords`                  | `string[]`                | iOS      | -           | Custom words (proper nouns, technical terms) to help with recognition.                        |
+| `minimumTextHeight`            | `number`                  | iOS      | ~0.03       | Minimum text height as fraction of image height (0-1). Lower values detect smaller text.      |
+| `recognitionLevel`             | `RecognitionLevel`        | iOS      | `ACCURATE`  | Recognition level: `ACCURATE` (slower, better) or `FAST` (faster, less accurate).             |
 
-#### TextRecognitionScript Enum
+#### TextRecognitionScript Enum (Android)
 
 | Value         | Description                                                        |
 | ------------- | ------------------------------------------------------------------ |
@@ -99,12 +112,19 @@ const japaneseTexts = await extractTextFromImage('file:///path/to/image.jpg', {
 | `JAPANESE`    | Japanese script - Hiragana, Katakana, Kanji                        |
 | `KOREAN`      | Korean script - Hangul                                             |
 
+#### RecognitionLevel Enum (iOS)
+
+| Value      | Description                                              |
+| ---------- | -------------------------------------------------------- |
+| `ACCURATE` | Slower but more accurate recognition (default).          |
+| `FAST`     | Faster but less accurate recognition.                    |
+
 ### `getSupportedLanguages()`
 
 Returns the list of supported languages on the current platform.
 
 ```ts
-import { getSupportedLanguages } from 'expo-text-extractor';
+import { getSupportedLanguages } from '@zhanziyang/expo-text-extractor';
 
 const languages = await getSupportedLanguages();
 console.log(languages);
@@ -132,7 +152,7 @@ console.log(languages);
 ### Recognizing Chinese Text
 
 ```ts
-import { extractTextFromImage, TextRecognitionScript } from 'expo-text-extractor';
+import { extractTextFromImage, TextRecognitionScript } from '@zhanziyang/expo-text-extractor';
 
 const recognizeChineseText = async (imageUri: string) => {
   const texts = await extractTextFromImage(imageUri, {
@@ -148,7 +168,7 @@ const recognizeChineseText = async (imageUri: string) => {
 ### Recognizing Japanese Text
 
 ```ts
-import { extractTextFromImage, TextRecognitionScript } from 'expo-text-extractor';
+import { extractTextFromImage, TextRecognitionScript } from '@zhanziyang/expo-text-extractor';
 
 const recognizeJapaneseText = async (imageUri: string) => {
   const texts = await extractTextFromImage(imageUri, {
@@ -164,7 +184,7 @@ const recognizeJapaneseText = async (imageUri: string) => {
 ### Recognizing Korean Text
 
 ```ts
-import { extractTextFromImage, TextRecognitionScript } from 'expo-text-extractor';
+import { extractTextFromImage, TextRecognitionScript } from '@zhanziyang/expo-text-extractor';
 
 const recognizeKoreanText = async (imageUri: string) => {
   const texts = await extractTextFromImage(imageUri, {
@@ -182,12 +202,61 @@ const recognizeKoreanText = async (imageUri: string) => {
 On iOS, you can specify multiple preferred languages:
 
 ```ts
-import { extractTextFromImage } from 'expo-text-extractor';
+import { extractTextFromImage } from '@zhanziyang/expo-text-extractor';
 
 const recognizeMultiLanguage = async (imageUri: string) => {
   const texts = await extractTextFromImage(imageUri, {
     // Recognize Japanese with English as fallback
     languages: ['ja-JP', 'en-US'],
+  });
+  
+  return texts.join('\n');
+};
+```
+
+### Advanced iOS Options
+
+Use all available iOS Vision options for fine-tuned recognition:
+
+```ts
+import { extractTextFromImage, RecognitionLevel } from '@zhanziyang/expo-text-extractor';
+
+const advancedRecognition = async (imageUri: string) => {
+  const texts = await extractTextFromImage(imageUri, {
+    // Specify preferred languages
+    languages: ['en-US'],
+    
+    // Or let iOS auto-detect (iOS 16+)
+    automaticallyDetectsLanguage: true,
+    
+    // Enable language correction for better accuracy
+    usesLanguageCorrection: true,
+    
+    // Add custom words for better recognition of proper nouns
+    customWords: ['iPhone', 'MacBook', 'AirPods', 'WWDC'],
+    
+    // Ignore very small text (5% of image height)
+    minimumTextHeight: 0.05,
+    
+    // Use accurate mode (default) or fast mode
+    recognitionLevel: RecognitionLevel.ACCURATE,
+  });
+  
+  return texts.join('\n');
+};
+```
+
+### Fast Recognition Mode (iOS)
+
+For real-time processing or when speed is critical:
+
+```ts
+import { extractTextFromImage, RecognitionLevel } from '@zhanziyang/expo-text-extractor';
+
+const fastRecognition = async (imageUri: string) => {
+  const texts = await extractTextFromImage(imageUri, {
+    recognitionLevel: RecognitionLevel.FAST,
+    usesLanguageCorrection: false, // Disable for extra speed
   });
   
   return texts.join('\n');
