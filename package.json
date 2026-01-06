@@ -1,20 +1,30 @@
 {
-  "name": "expo-text-extractor",
-  "version": "0.2.2",
-  "description": "A React Native library for efficient text recognition (OCR) using MLKit and Vision, enabling seamless text extraction from images.",
+  "name": "@zhanziyang/expo-text-extractor",
+  "version": "1.0.1",
+  "description": "Multi-language OCR text recognition for React Native/Expo using ML Kit and Vision. Supports Latin, Chinese, Japanese, Korean, and Devanagari scripts.",
   "keywords": [
     "react-native",
     "expo",
     "expo-text-extractor",
-    "ExpoTextExtractor"
+    "ocr",
+    "text-recognition",
+    "mlkit",
+    "vision",
+    "chinese",
+    "japanese",
+    "korean",
+    "multi-language"
   ],
-  "repository": "https://github.com/pchalupa/expo-text-extractor",
-  "bugs": {
-    "url": "http://localhost/issues"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhanziyang/expo-text-extractor.git"
   },
-  "author": "pchalupa <chalupa.petr93@gmail.com> (pchalupa)",
+  "bugs": {
+    "url": "https://github.com/zhanziyang/expo-text-extractor/issues"
+  },
+  "author": "zhanziyang (https://github.com/zhanziyang)",
   "license": "MIT",
-  "homepage": "https://github.com/pchalupa/expo-text-extractor#readme",
+  "homepage": "https://github.com/zhanziyang/expo-text-extractor#readme",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {

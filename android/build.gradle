@@ -41,6 +41,20 @@ android {
     abortOnError false
   }
   dependencies {
+    // ML Kit Text Recognition v2 - supports multiple scripts
+    // Latin script (default) - English, Spanish, French, German, Italian, Portuguese, etc.
     implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.1'
+    
+    // Chinese script - Simplified and Traditional Chinese
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition-chinese:16.0.1'
+    
+    // Devanagari script - Hindi, Sanskrit, Marathi, Nepali, etc.
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition-devanagari:16.0.1'
+    
+    // Japanese script - Hiragana, Katakana, Kanji
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition-japanese:16.0.1'
+    
+    // Korean script - Hangul
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition-korean:16.0.1'
   }
 }
